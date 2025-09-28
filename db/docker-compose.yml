@@ -1,0 +1,38 @@
+version: "3"
+services:
+  db:
+    image: pgvector/pgvector:pg17
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgress
+      - POSTGRES_DB=postgres
+    command: ["postgres", "-c", "max_connections=2048"]
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - postgres
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+       - pgadmin:/var/lib/pgadmin
+    ports:
+      - "5880:80"
+    networks:
+      - postgres
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  pgadmin:
+
+networks:
+  postgres:
+    driver: bridge
